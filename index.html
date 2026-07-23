@@ -81,7 +81,7 @@
 
   /* HERO */
   .hero{position:relative;overflow:hidden;}
-  .hero .wrap{position:relative;z-index:2;padding-top:40px;padding-bottom:44px;}
+  .hero .wrap{position:relative;z-index:2;padding-top:40px;padding-bottom:44px;display:flex;flex-direction:column;}
   .hero-copy{max-width:640px;}
   .hero-tag{display:inline-block;background:var(--musgo-d);color:#fff;font-weight:700;font-size:12.5px;
     letter-spacing:.4px;padding:7px 14px;border-radius:999px;margin-bottom:16px;}
@@ -90,7 +90,8 @@
   .hero .cta{width:100%;}
   .hero .microcopy{font-size:13.5px;color:#6d6052;margin-top:14px;text-align:center;}
   /* painel do hero: placeholder da foto (sem foto ainda): fundo orgânico + símbolo + badge */
-  .hero-panel{position:relative;margin-top:30px;aspect-ratio:4/3;border-radius:24px;overflow:hidden;
+  /* mobile: foto acima da copy (order); no desktop o grid volta à ordem do HTML */
+  .hero-panel{position:relative;order:-1;margin-bottom:28px;aspect-ratio:4/3;border-radius:24px;overflow:hidden;
     background:linear-gradient(150deg,#e7d8c2 0%,var(--rosa) 55%,var(--terracota) 120%);
     box-shadow:0 22px 46px rgba(120,70,45,.24);display:flex;align-items:center;justify-content:center;}
   .hero-panel .pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 16%;}
@@ -143,7 +144,7 @@
     .hero-copy{max-width:none;}
     .hero .cta{width:auto;}
     .hero .microcopy{text-align:left;}
-    .hero-panel{margin-top:0;aspect-ratio:4/5;}
+    .hero-panel{order:0;margin-bottom:0;aspect-ratio:4/5;}
     .sticky{display:none;}
     .wafloat{display:flex;}
     footer .frow{flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap;}
