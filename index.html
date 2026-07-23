@@ -94,14 +94,15 @@
   .hero .microcopy{font-size:13.5px;color:#6d6052;margin-top:14px;text-align:center;}
   /* painel do hero: placeholder da foto (sem foto ainda): fundo orgânico + símbolo + badge */
   /* mobile: foto acima da copy (order); no desktop o grid volta à ordem do HTML */
-  .hero-panel{position:relative;order:-1;margin-bottom:28px;aspect-ratio:4/3;border-radius:24px;overflow:hidden;
+  .hero-panel{position:relative;order:-1;margin-bottom:54px;aspect-ratio:1/1;max-height:460px;border-radius:24px;
     background:linear-gradient(150deg,#e7d8c2 0%,var(--rosa) 55%,var(--terracota) 120%);
     box-shadow:0 22px 46px rgba(120,70,45,.24);display:flex;align-items:center;justify-content:center;}
-  .hero-panel .pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 16%;}
+  .hero-panel .pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 16%;border-radius:24px;}
   .hero-panel .mono{width:52%;height:auto;opacity:.9;filter:drop-shadow(0 6px 14px rgba(120,70,45,.25));}
-  .hero-panel .badge{position:absolute;left:14px;bottom:14px;background:var(--creme);border-radius:18px;
+  /* no mobile o badge encosta na borda de baixo e transborda: devolve foto sem encolher o texto */
+  .hero-panel .badge{position:absolute;left:14px;bottom:0;transform:translateY(44%);background:var(--creme);border-radius:18px;
     padding:14px 19px;box-shadow:0 12px 28px rgba(80,45,25,.22);display:flex;align-items:center;gap:13px;}
-  .hero-panel .badge .sym{width:44px;height:44px;flex:0 0 auto;}
+  .hero-panel .badge .sym{width:40px;height:40px;flex:0 0 auto;}
   .hero-panel .badge b{display:block;font-family:var(--serif);font-weight:400;font-size:19px;color:var(--carvao);}
   /* a especialidade é o que a mãe procura: sobe pra quase o peso do nome; o serif do nome segue ancorando */
   .hero-panel .badge span{font-size:14px;font-weight:700;color:var(--carvao);letter-spacing:.1px;margin-top:4px;}
@@ -150,6 +151,7 @@
     .hero .cta{width:auto;}
     .hero .microcopy{text-align:left;}
     .hero-panel{order:0;margin-bottom:0;aspect-ratio:4/5;}
+    .hero-panel .badge{bottom:14px;transform:none;}
     .sticky{display:none;}
     .wafloat{display:flex;}
     footer .frow{flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap;}
