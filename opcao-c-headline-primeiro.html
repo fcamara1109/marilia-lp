@@ -223,11 +223,12 @@
     letter-spacing:.1px;line-height:1;color:var(--terracota-d);padding:9px 14px;border-radius:999px;
     background:rgba(251,246,239,.9);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
     border:1px solid rgba(255,255,255,.5);box-shadow:0 8px 20px rgba(80,45,25,.26);white-space:nowrap;}
-  .bolha::after{content:'';position:absolute;width:11px;height:11px;background:rgba(251,246,239,.9);transform:rotate(45deg);}
+  /* rabinho em diagonal, apontando pra pessoa: pra Marília cai pra esquerda, pro Nauê cai pra direita */
+  .bolha::after{content:'';position:absolute;width:0;height:0;border-top:15px solid rgba(251,246,239,.9);}
   .bolha-eu{top:11%;right:3%;}
-  .bolha-eu::after{left:14px;bottom:-4px;}
+  .bolha-eu::after{left:9px;bottom:-14px;border-right:16px solid transparent;}
   .bolha-filho{top:26%;left:3%;}
-  .bolha-filho::after{right:14px;bottom:-4px;}
+  .bolha-filho::after{right:9px;bottom:-14px;border-left:16px solid transparent;}
   @media (max-width:820px){
     /* a headline abre a pagina; a foto vem logo abaixo, grande, cortada pela dobra */
     .hero .wrap{padding-top:20px;padding-bottom:0;}
