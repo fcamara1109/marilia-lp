@@ -12,7 +12,7 @@
 
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="apple-touch-icon" href="assets/favicon-180.png">
-<title>Marília Campello · Fisioterapia CME e desenvolvimento infantil em BH</title>
+<title>[C · headline primeiro] Marília Campello · Fisioterapia CME e desenvolvimento infantil em BH</title>
 <meta name="description" content="Fisioterapeuta especializada em CME (Cuevas Medek Exercises) e desenvolvimento infantil, em Belo Horizonte. Mãe do Nauê, formada na fonte do método. Sua criança conquista cada movimento, no tempo dela.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Marília Campello · Fisioterapia CME e desenvolvimento infantil em BH">
@@ -86,7 +86,7 @@
   /* headline e sub em blocos curtos: ar entre as frases em vez de bloco de texto */
   .hero h1 span{display:block;}
   .hero h1 span + span{margin-top:.42em;}
-  .hi{color:var(--terracota);}
+  .hero h1 .hi{color:var(--terracota);}
   .hero h1{margin-bottom:28px;} /* sem subtítulo: o respiro antes do CTA vem daqui */
   .hero .sub{font-size:clamp(16px,4.4vw,19px);color:var(--ink-soft);line-height:1.6;max-width:540px;margin:22px 0 28px;}
   .hero .sub p + p{margin-top:.9em;}
@@ -210,6 +210,21 @@
   #wa-modal .back{display:block;width:100%;text-align:center;margin-top:.75rem;background:none;border:none;color:var(--wa-muted);font-size:.8rem;cursor:pointer;font-family:var(--wa-body-font);}
   #wa-modal .back:hover{color:var(--wa-head-b);}
 </style>
+<style>/* ===== OPCAO C · headline primeiro ===== */
+  /* nav fora do fluxo: na primeira dobra ela some e devolve a altura pro hero */
+  .nav{position:fixed;left:0;right:0;top:0;transition:transform .3s cubic-bezier(.2,.8,.2,1);}
+  .nav.at-top{transform:translateY(-100%);}
+  @media (prefers-reduced-motion:reduce){.nav{transition:none;}}
+  @media (min-width:821px){ .nav{position:sticky;transform:none;} }
+
+  @media (max-width:820px){
+    /* a headline abre a pagina; a foto vem logo abaixo, grande, cortada pela dobra */
+    .hero .wrap{padding-top:20px;padding-bottom:0;}
+    .hero h1{margin-bottom:0;}
+    .hero-panel{order:0;margin-top:26px;margin-bottom:54px;aspect-ratio:4/5;max-height:none;}
+    .hero .cta,.hero .microcopy{display:none;}
+  }
+</style>
 </head><body>
 
 <!-- NAV -->
@@ -299,8 +314,8 @@
 </style>
 <section class="block bg-areia story">
   <div class="wrap reveal">
-    <h2>Se sentindo meio atordoada? <span class="hi">Te conto a minha experiência.</span></h2>
-    <p>Descobri ainda na gravidez que o Nauê tinha T21. Veio o coração apertado e uma pergunta que não saía da minha cabeça: <b>e agora, por onde eu começo?</b></p>
+    <h2>Se sentindo meio atordoada? Te conto a minha experiência.</h2>
+    <p>Descobri ainda na gravidez que o Nauê tinha T21. Veio o coração apertado e uma pergunta que não saía da minha cabeça: e agora, por onde eu começo?</p>
     <p>Fui atrás. Errei, acertei, mas depois que nasceu era muito difícil pra mim entender se estava no caminho certo, ou se dava pra mais. Me cobrei demais. E descobrir o método CME deu um salto na evolução dele que me acalmou. Mas não te conto isso como promessa, cada criança é única.</p>
     <p>O que aprendi na pele foi simples: ninguém deveria atravessar isso no escuro. Foi o que me faltou, e é o que eu não deixo faltar pra quem chega aqui.</p>
     <div class="story-photos">
@@ -632,4 +647,13 @@
 
 })();
 </script>
+<script>
+(function(){var n=document.querySelector('.nav');if(!n)return;
+ var mq=window.matchMedia('(max-width:820px)');
+ function upd(){ if(!mq.matches){ n.classList.remove('at-top'); return; } n.classList.toggle('at-top', window.scrollY < 40); }
+ upd(); window.addEventListener('scroll',upd,{passive:true});
+ if(mq.addEventListener) mq.addEventListener('change',upd);
+})();
+</script>
+<div style="position:fixed;right:10px;top:10px;z-index:60;background:#33291F;color:#FBF6EF;font:600 12px/1 Mulish,sans-serif;padding:7px 13px;border-radius:999px;opacity:.85">Preview C · headline primeiro</div>
 </body></html>
