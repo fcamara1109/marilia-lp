@@ -689,13 +689,15 @@
   document.getElementById('wa-go').addEventListener('click', function(){
     var input=document.getElementById('wa-phone'), phone=waValidPhone(input.value);
     if(!phone){ waErr(input,true); return; }
-    window.dataLayer=window.dataLayer||[];
-    window.dataLayer.push({event:'lead_whatsapp'}); // conversão pro GTM/Ads (quando o container existir)
     if(WEBHOOK_URL){ var sep=WEBHOOK_URL.indexOf('?')<0?'?':'&'; try{ fetch(WEBHOOK_URL+sep+'phone='+encodeURIComponent(phone),{method:'POST',keepalive:true}); }catch(e){} }
     show(s2);
   });
   document.getElementById('wa-back').addEventListener('click', function(){ show(s1); });
-  document.getElementById('wa-go2').addEventListener('click', function(){ window.location.href=waUrl(); });
+  document.getElementById('wa-go2').addEventListener('click', function(){
+    window.dataLayer=window.dataLayer||[];
+    window.dataLayer.push({event:'lead_whatsapp'}); // conversão pro GTM/Ads
+    window.location.href=waUrl();
+  });
 
 })();
 </script>
