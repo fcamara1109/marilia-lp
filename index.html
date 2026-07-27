@@ -640,7 +640,7 @@
           <p><b>Isso é normal.</b> O número <b class="num">(31) 9 8448-0382</b>, da <b>Marília Campello</b>, é oficial.</p>
           <p>É só tocar em <b>Continuar</b> para falar comigo 🌿</p>
         </div>
-        <button class="btn" id="wa-go2" type="button">
+        <button class="btn" id="wa-last-step" type="button">
           <svg class="wa-ic" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M17.5 14.4c-.3-.15-1.8-.9-2-1s-.5-.15-.7.15-.8 1-1 1.2-.35.2-.65.05a8.1 8.1 0 0 1-2.4-1.5 9 9 0 0 1-1.65-2.05c-.15-.3 0-.45.15-.6l.45-.5c.15-.2.2-.3.3-.5s0-.4 0-.55-.7-1.65-.95-2.25-.5-.5-.7-.5h-.6c-.2 0-.55.05-.85.35a3.6 3.6 0 0 0-1.1 2.65 6.3 6.3 0 0 0 1.3 3.3 14.3 14.3 0 0 0 5.5 4.85c.75.3 1.35.5 1.8.65.75.25 1.45.2 2 .1.6-.1 1.8-.75 2.05-1.45s.25-1.35.2-1.45-.25-.2-.55-.35z"/></svg>
           Continuar para o WhatsApp
         </button>
@@ -693,7 +693,7 @@
     show(s2);
   });
   document.getElementById('wa-back').addEventListener('click', function(){ show(s1); });
-  document.getElementById('wa-go2').addEventListener('click', function(){
+  document.getElementById('wa-last-step').addEventListener('click', function(){
     window.dataLayer=window.dataLayer||[];
     window.dataLayer.push({event:'lead_whatsapp'}); // conversão pro GTM/Ads
     window.location.href=waUrl();
