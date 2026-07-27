@@ -655,7 +655,7 @@
 (function(){
   var PHONE = '5531984480382';
   var GREETING = 'Oi! Vim pelo site e quero saber mais sobre a fisioterapia pra minha criança.';
-  var WEBHOOK_URL = ''; // sem coletor ainda (pós-proposta)
+  var WEBHOOK_URL = 'https://n8n.srv1732310.hstgr.cloud/webhook/widget-lead-marilia'; // coletor n8n → BQ raw.events + aviso Telegram
 
   // ATRIBUIÇÃO DE CAMPANHA (sem GTM): lê utm_*/gclid da URL e anexa ref ao texto do
   // WhatsApp, pra cada lead carregar a campanha (n8n/manual lê a 1a mensagem).
@@ -689,7 +689,7 @@
   document.getElementById('wa-go').addEventListener('click', function(){
     var input=document.getElementById('wa-phone'), phone=waValidPhone(input.value);
     if(!phone){ waErr(input,true); return; }
-    if(WEBHOOK_URL){ var sep=WEBHOOK_URL.indexOf('?')<0?'?':'&'; try{ fetch(WEBHOOK_URL+sep+'phone='+encodeURIComponent(phone),{method:'POST',keepalive:true}); }catch(e){} }
+    if(WEBHOOK_URL){ var qq=new URLSearchParams(location.search); var sep=WEBHOOK_URL.indexOf('?')<0?'?':'&'; var qs='phone='+encodeURIComponent(phone)+'&ag='+encodeURIComponent(qq.get('ag')||'')+'&gclid='+encodeURIComponent(qq.get('gclid')||'')+'&gbraid='+encodeURIComponent(qq.get('gbraid')||'')+'&wbraid='+encodeURIComponent(qq.get('wbraid')||''); try{ fetch(WEBHOOK_URL+sep+qs,{method:'POST',keepalive:true}); }catch(e){} }
     show(s2);
   });
   document.getElementById('wa-back').addEventListener('click', function(){ show(s1); });
