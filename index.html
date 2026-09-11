@@ -690,12 +690,13 @@
     var input=document.getElementById('wa-phone'), phone=waValidPhone(input.value);
     if(!phone){ waErr(input,true); return; }
     if(WEBHOOK_URL){ var qq=new URLSearchParams(location.search); var sep=WEBHOOK_URL.indexOf('?')<0?'?':'&'; var qs='phone='+encodeURIComponent(phone)+'&ag='+encodeURIComponent(qq.get('ag')||'')+'&gclid='+encodeURIComponent(qq.get('gclid')||'')+'&gbraid='+encodeURIComponent(qq.get('gbraid')||'')+'&wbraid='+encodeURIComponent(qq.get('wbraid')||''); try{ fetch(WEBHOOK_URL+sep+qs,{method:'POST',keepalive:true}); }catch(e){} }
+    window._marilia_phone = phone;
     show(s2);
   });
   document.getElementById('wa-back').addEventListener('click', function(){ show(s1); });
   document.getElementById('wa-last-step').addEventListener('click', function(){
     window.dataLayer=window.dataLayer||[];
-    window.dataLayer.push({event:'lead_whatsapp'}); // conversão pro GTM/Ads
+    window.dataLayer.push({event:'lead_whatsapp', user_data:{phone_number:'+55'+window._marilia_phone}}); // conversão pro GTM/Ads
     window.location.href=waUrl();
   });
 
