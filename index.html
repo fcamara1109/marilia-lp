@@ -684,11 +684,14 @@
   modal.addEventListener('click', function(e){ if(e.target===modal) closeModal(); });
   // validação WhatsApp BR: DDD + 8 ou 9 dígitos (tolera DDI 55). '' = inválido.
   function waValidPhone(raw){ var d=(raw||'').replace(/\D/g,''); if((d.length===12||d.length===13)&&d.slice(0,2)==='55') d=d.slice(2); return (d.length===10||d.length===11)&&d.charAt(0)!=='0' ? d : ''; }
+  // Normalizacao E.164 do telefone (mesma regra do servidor, conversa.py). Recebe entrada JA VALIDADA de waValidPhone.
+  function telefoneE164(t) { var d = String(t || '').replace(/\D/g, ''); if ((d.length === 10 || d.length === 11) && d.slice(0, 2) !== '55') { d = '55' + d; } if (d.length === 12 && d.slice(0, 2) === '55') { d = d.slice(0, 4) + '9' + d.slice(4); } return d; }
   function waErr(input,on){ input.classList.toggle('wa-err',on); var m=input.parentNode.querySelector('.wa-err-msg'); if(on&&!m){ m=document.createElement('span'); m.className='wa-err-msg'; m.textContent='Digite seu WhatsApp com DDD (ex.: 31 90000-0000)'; input.parentNode.appendChild(m); } else if(m){ m.style.display=on?'block':'none'; } if(on) input.focus(); }
   (function(){ var _p=document.getElementById('wa-phone'); if(_p) _p.addEventListener('input',function(){ if(this.classList.contains('wa-err')) waErr(this,false); }); })();
   document.getElementById('wa-go').addEventListener('click', function(){
-    var input=document.getElementById('wa-phone'), phone=waValidPhone(input.value);
-    if(!phone){ waErr(input,true); return; }
+    var input=document.getElementById('wa-phone'), valido=waValidPhone(input.value);
+    if(!valido){ waErr(input,true); return; }
+    var phone=telefoneE164(valido);
     if(WEBHOOK_URL){ var qq=new URLSearchParams(location.search); var sep=WEBHOOK_URL.indexOf('?')<0?'?':'&'; var qs='phone='+encodeURIComponent(phone)+'&ag='+encodeURIComponent(qq.get('ag')||'')+'&gclid='+encodeURIComponent(qq.get('gclid')||'')+'&gbraid='+encodeURIComponent(qq.get('gbraid')||'')+'&wbraid='+encodeURIComponent(qq.get('wbraid')||''); try{ fetch(WEBHOOK_URL+sep+qs,{method:'POST',keepalive:true}); }catch(e){} }
     window._marilia_phone = phone;
     show(s2);
@@ -696,7 +699,7 @@
   document.getElementById('wa-back').addEventListener('click', function(){ show(s1); });
   document.getElementById('wa-last-step').addEventListener('click', function(){
     window.dataLayer=window.dataLayer||[];
-    window.dataLayer.push({event:'lead_whatsapp', user_data:{phone_number:'+55'+window._marilia_phone}}); // conversão pro GTM/Ads
+    window.dataLayer.push({event:'lead_whatsapp', user_data:{phone_number:'+'+window._marilia_phone}}); // conversão pro GTM/Ads
     window.location.href=waUrl();
   });
 
