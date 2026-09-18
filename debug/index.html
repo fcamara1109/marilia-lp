@@ -662,22 +662,8 @@
   var GREETING = 'Oi! Vim pelo site e quero saber mais sobre a fisioterapia pra minha criança.';
   var WEBHOOK_URL = 'https://n8n.srv1732310.hstgr.cloud/webhook/widget-lead?t=marilia'; // coletor n8n → BQ raw.events + aviso Telegram
 
-  // ATRIBUIÇÃO DE CAMPANHA (sem GTM): lê utm_*/gclid da URL e anexa ref ao texto do
-  // WhatsApp, pra cada lead carregar a campanha (n8n/manual lê a 1a mensagem).
-  // ponytail: gclid->BigQuery->Data Manager é o caminho preciso futuro; isto funciona hoje.
-  function campaignRef(){
-    try{
-      var q = new URLSearchParams(location.search);
-      var parts = [];
-      ['utm_campaign','utm_source','utm_medium','utm_content','utm_term'].forEach(function(k){
-        var v = q.get(k); if(v) parts.push(k.replace('utm_','')+'='+v);
-      });
-      var g = q.get('gclid'); if(g) parts.push('gclid='+g);
-      return parts.length ? '\n\n[origem: '+parts.join(' · ')+']' : '';
-    }catch(e){ return ''; }
-  }
   function waUrl(){
-    return 'https://api.whatsapp.com/send?phone='+PHONE+'&text='+encodeURIComponent(GREETING+campaignRef());
+    return 'https://api.whatsapp.com/send?phone='+PHONE+'&text='+encodeURIComponent(GREETING);
   }
 
   var modal=document.getElementById('wa-modal'),s1=document.getElementById('wa-s1'),s2=document.getElementById('wa-s2');
