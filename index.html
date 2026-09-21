@@ -600,6 +600,37 @@
   </a>
 </div>
 
+<!-- tracker de click id. Fonte unica: marketing-agency/sites/_shared/tracker.snippet.html. Nao editar aqui, editar no canonico. -->
+<!-- Duas formas de instalar, e o <script> e identico nos dois casos: -->
+<!--   1. Inline na LP: colar antes de </body> e SEMPRE antes do script do widget, porque o widget chama clickIds(). -->
+<!--   2. GTM: colar como tag Custom HTML com trigger All Pages. Use quando o site e de terceiro e so temos o container. -->
+<!-- Grava cookie `tracker` (365 dias) com ids de clique e UTMs; sem fetch externo. -->
+<!-- O encoder e o widget leem via window.trackerData() e anexam os campos no POST lead_collect. -->
+<script>
+(function(){
+var COOKIE_NAME = 'tracker';
+var TTL_DAYS = 365;
+var MAX_URL_LEN = 500;
+var KEYS = ['gclid','gbraid','wbraid','gad_source','gad_campaignid','ttclid','msclkid','oppref','obref','fbp','fbc','utm_source','utm_medium','utm_campaign','session_start_usec','landing_page_url'];
+function readCookie(){ var out = {}; try { var parts = (document.cookie || '').split(';'); for (var i = 0; i < parts.length; i++) { var kv = parts[i].split('='); var k = (kv[0] || '').trim(); if (k === COOKIE_NAME) { try { out = JSON.parse(decodeURIComponent((kv.slice(1).join('=')) || '{}')) || {}; } catch (e) {} } } } catch (e) {} return out; }
+function writeCookie(data){ try { var exp = new Date(Date.now() + TTL_DAYS * 864e5).toUTCString(); document.cookie = COOKIE_NAME + '=' + encodeURIComponent(JSON.stringify(data)) + '; expires=' + exp + '; path=/; SameSite=Lax'; } catch (e) {} }
+// Corta a URL de pouso. E o unico campo sem tamanho definido, e cookie acima de 4 KB o navegador recusa calado, levando junto o click id.
+function pageUrl(){ try { return String(location.href || '').slice(0, MAX_URL_LEN); } catch (e) { return ''; } }
+function fromUrl(){ var out = {}; try { var q = new URLSearchParams(location.search); out.gclid = q.get('gclid') || ''; out.gbraid = q.get('gbraid') || ''; out.wbraid = q.get('wbraid') || ''; out.gad_source = q.get('gad_source') || ''; out.gad_campaignid = q.get('gad_campaignid') || ''; out.ttclid = q.get('ttclid') || ''; out.msclkid = q.get('msclkid') || ''; out.oppref = q.get('oppref') || ''; out.obref = q.get('obref') || ''; out.fbp = q.get('fbp') || ''; out.fbc = q.get('fbc') || ''; out.utm_source = q.get('utm_source') || ''; out.utm_medium = q.get('utm_medium') || ''; out.utm_campaign = q.get('utm_campaign') || ''; } catch (e) {} return out; }
+function fromCookies(){ var out = { fbp: '', fbc: '' }; try { var parts = (document.cookie || '').split(';'); for (var i = 0; i < parts.length; i++) { var kv = parts[i].split('='); var k = (kv[0] || '').trim(); var v = decodeURIComponent((kv.slice(1).join('=')) || ''); if (k === '_fbp' && !out.fbp) out.fbp = v; if (k === '_fbc' && !out.fbc) out.fbc = v; } } catch (e) {} return out; }
+// Resgate: le o gclid do cookie do proprio Google quando o nosso cookie ainda nao tem.
+// _gcl_aw vale "GCL.<ts>.<gclid>" e _gac_<propriedade> vale "<versao>.<ts>.<gclid>": nos dois o id e o trecho apos o ultimo ponto.
+// O prefixo TEM que sair aqui: o SQL valida com ^[A-Za-z0-9_-]{40,} e o ponto faz o valor cru virar NULL calado.
+// So gclid. gbraid e wbraid vem so da URL, de proposito: click id de iOS lido de cookie gera erro de identificador antigo no Google Ads.
+function gclFromValue(v){ try { var s = decodeURIComponent(v || ''); var i = s.lastIndexOf('.'); return i < 0 ? '' : s.slice(i + 1); } catch (e) { return ''; } }
+function fromGoogleCookies(){ var out = { gclid: '' }; try { var parts = (document.cookie || '').split(';'); var gac = ''; for (var i = 0; i < parts.length; i++) { var kv = parts[i].split('='); var k = (kv[0] || '').trim(); var v = kv.slice(1).join('='); if (k === '_gcl_aw' && !out.gclid) out.gclid = gclFromValue(v); else if (k.indexOf('_gac_') === 0 && !gac) gac = gclFromValue(v); } if (!out.gclid) out.gclid = gac; } catch (e) {} return out; }
+// Precedencia: URL vence o nosso cookie, que vence o cookie do Google. Valor vazio nunca sobrescreve valor cheio.
+function capture(){ var stored = readCookie(); var url = fromUrl(); var ck = fromCookies(); var hasUrl = false; for (var i = 0; i < KEYS.length; i++) { if (url[KEYS[i]]) { hasUrl = true; break; } } var data = {}; for (var j = 0; j < KEYS.length; j++) { var k = KEYS[j]; data[k] = stored[k] || ''; } var rescued = false; if (!data.gclid) { var g = fromGoogleCookies(); if (g.gclid) { data.gclid = g.gclid; rescued = true; } } if (hasUrl) { for (var m = 0; m < KEYS.length; m++) { var k2 = KEYS[m]; if (url[k2]) data[k2] = url[k2]; } if (!data.session_start_usec) data.session_start_usec = String(Date.now() * 1000); if (!data.landing_page_url) data.landing_page_url = pageUrl(); writeCookie(data); return data; } if (!data.fbp && ck.fbp) data.fbp = ck.fbp; if (!data.fbc && ck.fbc) data.fbc = ck.fbc; if (!stored.session_start_usec) { data.session_start_usec = String(Date.now() * 1000); data.landing_page_url = pageUrl(); writeCookie(data); } else if (rescued) { writeCookie(data); } return data; }
+var current = capture();
+window.trackerData = function(){ try { var d = JSON.parse(JSON.stringify(current || {})); try { d.user_agent = (typeof navigator !== 'undefined' && navigator.userAgent) || ''; } catch (e2) {} return d; } catch (e) { return {}; } };
+if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', capture); } })();
+</script>
+
 <!-- ===== widget WhatsApp (canônico builder, tema Marília + atribuição de campanha) ===== -->
 <dialog id="wa-modal" aria-label="Falar pelo WhatsApp">
   <div class="widget">
@@ -673,6 +704,7 @@
   // Normalizacao E.164 do telefone (mesma regra do servidor, conversa.py). Recebe entrada JA VALIDADA de waValidPhone.
   function telefoneE164(t) { var d = String(t || '').replace(/\D/g, ''); if ((d.length === 10 || d.length === 11) && d.slice(0, 2) !== '55') { d = '55' + d; } if (d.length === 12 && d.slice(0, 2) === '55') { d = d.slice(0, 4) + '9' + d.slice(4); } return d; }
   function waErr(input,on){ input.classList.toggle('wa-err',on); var m=input.parentNode.querySelector('.wa-err-msg'); if(on&&!m){ m=document.createElement('span'); m.className='wa-err-msg'; m.textContent='Digite seu WhatsApp com DDD (ex.: 31 90000-0000)'; input.parentNode.appendChild(m); } else if(m){ m.style.display=on?'block':'none'; } if(on) input.focus(); }
+  function clickIds(){ var q=new URLSearchParams(location.search); var t={}; try{ if(window.trackerData) t=window.trackerData()||{}; }catch(e){} return { gclid: t.gclid || q.get('gclid') || '', gbraid: t.gbraid || q.get('gbraid') || '', wbraid: t.wbraid || q.get('wbraid') || '' }; }
   (function(){ var _p=document.getElementById('wa-phone'); if(_p) _p.addEventListener('input',function(){ if(this.classList.contains('wa-err')) waErr(this,false); }); })();
   document.getElementById('wa-go').addEventListener('click', function(){
     var input=document.getElementById('wa-phone'), valido=waValidPhone(input.value);
@@ -681,7 +713,7 @@
     window._marilia_phone = phone;
     window.dataLayer=window.dataLayer||[];
     window.dataLayer.push({event:'lead_whatsapp', user_data:{phone_number:'+'+phone}});
-    if(WEBHOOK_URL){ var qq=new URLSearchParams(location.search); var sep=WEBHOOK_URL.indexOf('?')<0?'?':'&'; var qs='phone='+encodeURIComponent(phone)+'&ag='+encodeURIComponent(qq.get('ag')||'')+'&gclid='+encodeURIComponent(qq.get('gclid')||'')+'&gbraid='+encodeURIComponent(qq.get('gbraid')||'')+'&wbraid='+encodeURIComponent(qq.get('wbraid')||''); try{ fetch(WEBHOOK_URL+sep+qs,{method:'POST',keepalive:true}); }catch(e){} }
+    if(WEBHOOK_URL){ var qq=new URLSearchParams(location.search); var ids=clickIds(); var sep=WEBHOOK_URL.indexOf('?')<0?'?':'&'; var qs='phone='+encodeURIComponent(phone)+'&ag='+encodeURIComponent(qq.get('ag')||'')+'&gclid='+encodeURIComponent(ids.gclid)+'&gbraid='+encodeURIComponent(ids.gbraid)+'&wbraid='+encodeURIComponent(ids.wbraid); try{ fetch(WEBHOOK_URL+sep+qs,{method:'POST',keepalive:true}); }catch(e){} }
     show(s2);
   });
   document.getElementById('wa-back').addEventListener('click', function(){ show(s1); });
